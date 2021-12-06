@@ -7,6 +7,11 @@
         <link rel="stylesheet" href="../static/css/ticket_demo.css">
         <link rel="stylesheet" href="../static/css/ticket_normalize.css">
         <script src="../static/js/modernizr-custom.js"></script>
+        <script>
+        $.ajaxSetup({
+            headers: { "X-CSRFToken": '{{csrf_token}}' }
+        });
+        </script>
     {% endblock %}
 </head>
 
@@ -15,6 +20,7 @@
 <section class="ticketing">
     <h3>예매하기</h3>
     <form action="" method="POST">
+        {% csrf_token %}
         <div class="ticketing__container">
             <div class="ticketing__calender">
                 <input type="date" name="" id="">
@@ -23,17 +29,16 @@
                 <div class="movie select_container">
                     <h5>영화</h5>
                     <div class="select_list">
-                        <input type="radio" class="movie" name="movie" id="movie1" value="기생충"><label for="movie1">영화1</label>
-                        <input type="radio" name="movie" id="movie2" value="영화2"><label for="movie2">영화2</label>
+                        {% for movie in movies %}
+                        <input type="radio" class="movie" name="movie" id="{{ movie.movie_id }}" value="{{ movie.movie_name }}" onclick="movie_onClick()"><label for="{{ movie.movie_id }}">{{ movie.movie_name }}</label>
+                        {% endfor %}
                     </div>
                 </div>
                 <div class="theater select_container">
                     <h5>극장</h5>
                     <div>
-                        <div class="select_list">
-                            <input type="radio" name="" id="">
-                        </div>
-                        <div class="select_list"></div>
+                        <div id="theater_list" class="select_list"></div>
+                        <div id="branch_list" class="select_list"></div>
                     </div>
                 </div>
                 <div class="time select_container">
@@ -44,32 +49,79 @@
         </div>
 
         <script src="https://code.jquery.com/jquery-3.6.0.min.js" integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" crossorigin="anonymous"></script>
+        <script src="../static/js/ticketing_onclicks.js"></script>
         <script type="text/javascript">
-            $(".movie").click(function() {
-                let pk = $(this).val();
-                $.ajax({
-                    method: "GET",
-                    url: "{% url 'ticketing' %}",
-                    data: { 'movie_id': pk, },
-                    dataType: "json",
-                })
-                .done(res => {
-                    res.theaters.array.forEach(theater => {
-                        let new_radio = 
-                            $("input").attr({
-                                id: theater.theater_name,
-                                type: "radio",
-                                value: theater.theater_name,
-                                class: "theater",
-                                name: "theater",
-                            }).after($("label").attr("for", theaters.theater_name));
-                        $('#theater_list').append(new_radio);
-                    });   
-                })
-                .fail((xhr, status, errorThrown) => {
-                    alert("오류가 발생했습니다: " + errorThrown);
-                })
-            })
+        /*
+            $(function() {
+                let is_requested = false;
+                let context = new Object();
+
+                $(".movie").click(function() {
+                    if(!is_requested || !context.movie_name) {
+                        context.movie_name = $(this).val();
+                        is_requested = context.movie_name ? true : false;
+                        $('#theater_list').empty();
+                        let pk = $(this).attr('id');
+                        $.ajax({
+                            method: "POST",
+                            url: "{% url 'ticketing' %}",
+                            data: { 
+                                'movie_id': pk,
+                                'csrfmiddlewaretoken': '{{ csrf_token }}',
+                            },
+                            dataType: "json",
+                        })
+                        .done(res => {
+                            console.log(context);
+                            console.log(JSON.stringify(context));
+                            let theaters = res.theaters;
+                            theaters.forEach(theater => {
+                                let new_radio = "<input id="+theater+" type='radio' value="+theater+" class='theater_city' name='theater_city'/>";
+                                new_radio += "<label for="+theater+">"+theater+"</label>";
+                                $('#theater_list').append(new_radio);
+                            });   
+                        })
+                        .fail((xhr, status, errorThrown) => {
+                            alert("오류가 발생했습니다: " + errorThrown);
+                        })
+                    }
+                });
+
+                $('.theater_city').click(function () {
+                    if(is_requested && !context.movie_city) {
+                        console.log("is_requested false");
+                        is_requested = false;
+                    }
+                    if(!is_requested || !context.movie_city) {
+                        let movie_city = $(this).val();
+                        console.log("movie_city: "+movie_city);
+                        context.movie_city = movie_city;
+                        is_requested = context.movie_city ? true : false;
+                        $('#branch_list').empty();
+                        $.ajax({
+                            method: "POST",
+                            url: "{% url 'ticketing' %}",
+                            data: { 
+                                'movie_city': movie_city,
+                                'csrfmiddlewaretoken': '{{ csrf_token }}',
+                            },
+                            dataType: "json",
+                        })
+                        .done(res => {
+                            let branch_names = res.branch_names;
+                            branch_names.forEach(branch_name => {
+                                let new_radio = "<input id="+branch_name+" type='radio' value="+branch_name+" class='theater_branch' name='theater_branch'/>";
+                                new_radio += "<label for="+branch_name+">"+branch_name+"</label>";
+                                $('#branch_list').append(new_radio);
+                            });
+                        })
+                        .fail((xhr, status, errorThrown) => {
+                            alert("오류가 발생했습니다: " + errorThrown);
+                        });
+                    }
+                });
+            });
+        */
         </script>
 
         <div id="modal">

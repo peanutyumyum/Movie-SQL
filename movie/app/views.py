@@ -40,31 +40,35 @@ def ticket_list(request):
 
 
 def ticketing(request):
+    context = {}
     if request.is_ajax:
-        data = request.GET.get('movie_id', None)
-        print(data)
-        movies = MovieInfo.objects.all()
-        
-        selected_data_set = movies.filter(movie_name = data)
-        print(selected_data_set)
-        screens = []
-        for movie_data in selected_data_set :
-            screens += Screen.objects.filter(movie_id = movie_data.movie_id)
-        # screens = Screen.objects.filter(movie_id=selected_data_set)
-        print(screens)
-        theaters = Screen.objects.get(theater_number=screens)
-        print(theaters)
-        """ theaters_num = []
-        for theater_data in screens:
-            theaters_num += theater_data.theater_number
-            print(theater_data)
-        print(theaters_num) """
-        
-        #theaters = TheaterInfo.objects.all()
-        #theaters.filter(theater_number=theaters_num)
-        """ context = {
-            'theaters' : theaters
-        } """
+        branch_offices = []
+        if request.GET.get('movie_id'):
+            res_id = request.GET.get('movie_id')
+            movies = MovieInfo.objects.filter(movie_id = res_id)
+            print("선택된 영화:", movies)
+            screens = Screen.objects.filter(movie_id = res_id)
+            print("선택된 영화 상영 정보:", screens)
+            theaters = []
+            for screen in screens:
+                theaters.append(((screen.theater_number).branch_office).city)
+                branch_offices.append((screen.theater_number).branch_office)
+            context = {
+                'theaters': theaters,
+            }
+            print("선택된 영화가 상영되는 지점 정보:", context)
+            return JsonResponse(context, status=200)
+    
+        elif request.GET.get('movie_city'):
+            print("branch_offices",branch_offices)
+            branch_names = []
+            for branch_office in branch_offices:
+                branch_names.append(branch_office.name)
+            context = {
+                'branch_names': branch_names,
+            }
+            print("branch_name:", context)
+            return JsonResponse(context, status=200)
 
     # if request.method == "POST":
         # 영화이름 movie
@@ -74,8 +78,8 @@ def ticketing(request):
         # 좌석
         # 유저
         # A이면~~ B이면 ~~ 해서 짤라서 보내줌
-    #return JsonResponse(context, status=200)
-    return HttpResponse("hi")
+    #return HttpResponse("hi")
+    return JsonResponse(context, status=200)
 
 def ticketing_detail(request):
     return render(request, 'ticketing.html')
