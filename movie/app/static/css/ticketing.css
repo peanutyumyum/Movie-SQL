@@ -1,10 +1,5 @@
-* {
-    padding: 0;
-    margin: 0;
-}
-
 .ticketing {
-    width: 1000px;
+    width: 80%;
     margin: 5% auto;
 }
 
@@ -12,14 +7,14 @@
     font-weight: bold;
 }
 
-.ticketing .ticketing__container {
+.ticketing__container {
     display: flex;
     flex-direction: column;
 
     margin-top: 20px;
 
     height: 500px;
-    border: 2px solid #C4C4C4;
+    box-shadow: 1px 1px 10px 1px #C4C4C4;
 }
 
 .ticketing__calender {
@@ -98,4 +93,8 @@
 .select_list input[type='radio']:checked + label {
     background-color: #D1DFEB;
     color: #1F588D;
+}
+
+.seat_row input[type='radio'] {
+    display: none;
 }
