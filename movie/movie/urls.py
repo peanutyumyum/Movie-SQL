@@ -33,6 +33,14 @@ urlpatterns = [
     path('findID', findID, name="findID"),
     path('logout/',logout, name='logout'),
     path('ticketing', ticketing, name="ticketing"),
+    
+    path('mypage', mypage, name="mypage"),
+    path('eventrecord', eventrecord, name="eventrecord"),
+    path('infomodification', infomodification, name="infomodification"),
+    path('reservationinfo', reservationinfo, name="reservationinfo"),
+
+    path('manage_main', manage_main, name="manage_main"),
+    path('manage_revenue', manage_revenue, name="manage_revenue"),
 ]
 urlpatterns += static(settings.MEDIA_URL, document_root = settings.MEDIA_ROOT)
 urlpatterns += static(settings.STATIC_URL, document_root = settings.STATIC_ROOT)

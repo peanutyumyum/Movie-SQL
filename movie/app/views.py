@@ -194,3 +194,22 @@ def logout_view(request):
 
 def events(request):
     return render(request, 'events.html')
+
+def mypage(request):
+    return render(request, './mypage/mypage.html')
+
+def eventrecord(request):
+    return render(request, './mypage/eventrecord.html')
+
+def infomodification(request):
+    return render(request, './mypage/infomodification.html')
+
+def reservationinfo(request):
+    return render(request, './mypage/reservationinfo.html') 
+
+
+def manage_main(request):
+    return render(request, './manage_page/manage_main.html')
+
+def manage_revenue(request):
+    return render(request, './manage_page/manage_revenue.html')
