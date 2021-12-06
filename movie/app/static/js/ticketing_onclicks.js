@@ -60,7 +60,10 @@ function theaterCity_onClick() {
         console.log("movie_city: "+movie_city);
         context.movie_city = movie_city;
         is_requested = context.movie_city ? true : false;
-        document.getElementById("branch_list").empty;
+        let branch_list = document.getElementById("branch_list");
+        while(branch_list.hasChildNodes()) {
+            branch_list.removeChild(branch_list.firstChild);
+        }
         // $('#branch_list').empty();
         $.ajax({
             method: "GET",
