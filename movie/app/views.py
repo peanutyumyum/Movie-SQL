@@ -2,6 +2,7 @@
 import json
 
 from django.core import serializers
+from django.db.models.query import QuerySet
 from django.http import JsonResponse
 
 # for user
@@ -18,8 +19,8 @@ from django.http.response import HttpResponse
 from django.shortcuts import render, redirect
 from django.utils import timezone
 
-from .models import CustomerUser, MovieInfo, Screen, Seat, TheaterInfo
-
+from .models import BranchOffice, CustomerUser, MovieInfo, Screen, Seat, TheaterInfo
+import datetime
 
 # Create your views here.
 def home(request):
@@ -41,34 +42,83 @@ def ticket_list(request):
 
 def ticketing(request):
     context = {}
+    branch_names = []
     if request.is_ajax:
-        branch_offices = []
-        if request.GET.get('movie_id'):
+        if request.GET.get('message') == "movie_name_click":
             res_id = request.GET.get('movie_id')
-            movies = MovieInfo.objects.filter(movie_id = res_id)
-            print("선택된 영화:", movies)
+            ticket_date = request.GET.get('ticket_date')
+            if not ticket_date:
+                context = {
+                    'alert':"날짜를 먼저 선택해주세요.",
+                }
+                return JsonResponse(context, status=200)
+            #movies = MovieInfo.objects.filter(movie_id = res_id)
+            #print("선택된 영화:", movies)
             screens = Screen.objects.filter(movie_id = res_id)
+            screens = screens.filter(start_time__date=ticket_date)
             print("선택된 영화 상영 정보:", screens)
             theaters = []
             for screen in screens:
                 theaters.append(((screen.theater_number).branch_office).city)
-                branch_offices.append((screen.theater_number).branch_office)
             context = {
-                'theaters': theaters,
+                'theaters': list(set(theaters)),
             }
             print("선택된 영화가 상영되는 지점 정보:", context)
             return JsonResponse(context, status=200)
-    
-        elif request.GET.get('movie_city'):
-            print("branch_offices",branch_offices)
-            branch_names = []
+        
+        elif request.GET.get('message') == "theater_city_click":
+            res_id = request.GET.get('movie_id')
+            ticket_date = request.GET.get('ticket_date')
+            branch_offices = BranchOffice.objects.filter(city=request.GET.get('movie_city'))
+            
+            theaters = TheaterInfo.objects.all()
             for branch_office in branch_offices:
-                branch_names.append(branch_office.name)
+                theaters = theaters.filter(branch_office=branch_office)
+            print("theaters: ", theaters)
+           
+            screens = Screen.objects.filter(start_time__date=ticket_date)
+            for theater in theaters:
+                screens = screens.filter(movie_id=res_id, theater_number=theater)
+            print("screens: ", screens)
+            
+            branch_names = []
+            for screen in screens:
+                branch_names.append(((screen.theater_number).branch_office).name)
             context = {
-                'branch_names': branch_names,
+                'branch_names': list(set(branch_names)),
             }
-            print("branch_name:", context)
             return JsonResponse(context, status=200)
+
+        elif request.GET.get('message') == "theater_branch_click":
+            movie_id = request.GET.get('movie_id')
+            theater_city = request.GET.get('theater_city')
+            branch_name = request.GET.get('branch_name')
+            ticket_date = request.GET.get('ticket_date')
+            branch_offices = BranchOffice.objects.filter(name=branch_name, city=theater_city)
+            theaters = TheaterInfo.objects.all()
+            for branch_office in branch_offices:
+                theaters = theaters.filter(branch_office=branch_office)
+            screens = Screen.objects.filter(start_time__date=ticket_date)
+            for theater in theaters:
+                screens = screens.filter(theater_number=theater, movie_id=movie_id)
+            
+            print("screens",screens)
+
+            screen_list = []
+            for screen in screens:
+                screen_list.append({
+                    'theater_name': screen.theater_number.theater_name,
+                    'start_time': screen.start_time,
+                    'end_time': screen.end_time,
+                })
+
+            context = {
+                'screens': screen_list,
+            }
+
+            return JsonResponse(context, status=200)
+
+        
 
     # if request.method == "POST":
         # 영화이름 movie

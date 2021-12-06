@@ -7,11 +7,6 @@
         <link rel="stylesheet" href="../static/css/ticket_demo.css">
         <link rel="stylesheet" href="../static/css/ticket_normalize.css">
         <script src="../static/js/modernizr-custom.js"></script>
-        <script>
-        $.ajaxSetup({
-            headers: { "X-CSRFToken": '{{csrf_token}}' }
-        });
-        </script>
     {% endblock %}
 </head>
 
@@ -23,14 +18,14 @@
         {% csrf_token %}
         <div class="ticketing__container">
             <div class="ticketing__calender">
-                <input type="date" name="" id="">
+                <input type="date" name="" id="ticket_date" onchange="dateChangeHandler(event)">
             </div>
             <div class="ticketing__select">
                 <div class="movie select_container">
                     <h5>영화</h5>
-                    <div class="select_list">
+                    <div id="movie_list" class="select_list">
                         {% for movie in movies %}
-                        <input type="radio" class="movie" name="movie" id="{{ movie.movie_id }}" value="{{ movie.movie_name }}" onclick="movie_onClick()"><label for="{{ movie.movie_id }}">{{ movie.movie_name }}</label>
+                        <input type="radio" class="movie" name="movie" id="{{ movie.movie_id }}" value="{{ movie.movie_name }}" onclick="movie_onClick(event)"><label for="{{ movie.movie_id }}">{{ movie.movie_name }}</label>
                         {% endfor %}
                     </div>
                 </div>
@@ -43,87 +38,196 @@
                 </div>
                 <div class="time select_container">
                     <h5>시간</h5>
-                    <div class="select_list"></div>
+                    <div id="time_list" class="select_list"></div>
                 </div>
             </div>
         </div>
 
         <script src="https://code.jquery.com/jquery-3.6.0.min.js" integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" crossorigin="anonymous"></script>
-        <script src="../static/js/ticketing_onclicks.js"></script>
-        <script type="text/javascript">
-        /*
-            $(function() {
-                let is_requested = false;
-                let context = new Object();
+        
+        <script>
+            let context = new Object();
 
-                $(".movie").click(function() {
-                    if(!is_requested || !context.movie_name) {
-                        context.movie_name = $(this).val();
-                        is_requested = context.movie_name ? true : false;
-                        $('#theater_list').empty();
-                        let pk = $(this).attr('id');
-                        $.ajax({
-                            method: "POST",
-                            url: "{% url 'ticketing' %}",
-                            data: { 
-                                'movie_id': pk,
-                                'csrfmiddlewaretoken': '{{ csrf_token }}',
-                            },
-                            dataType: "json",
-                        })
-                        .done(res => {
-                            console.log(context);
-                            console.log(JSON.stringify(context));
-                            let theaters = res.theaters;
-                            theaters.forEach(theater => {
-                                let new_radio = "<input id="+theater+" type='radio' value="+theater+" class='theater_city' name='theater_city'/>";
-                                new_radio += "<label for="+theater+">"+theater+"</label>";
-                                $('#theater_list').append(new_radio);
-                            });   
-                        })
-                        .fail((xhr, status, errorThrown) => {
-                            alert("오류가 발생했습니다: " + errorThrown);
-                        })
-                    }
-                });
+            function dateChangeHandler(event) {
+                context.ticket_date = event.target.value;
+                console.log(context);
 
-                $('.theater_city').click(function () {
-                    if(is_requested && !context.movie_city) {
-                        console.log("is_requested false");
-                        is_requested = false;
+                let theater_list = document.getElementById("theater_list");
+                while(theater_list.hasChildNodes()) {
+                    theater_list.removeChild(theater_list.firstChild);
+                }
+                let branch_list = document.getElementById("branch_list");
+                while(branch_list.hasChildNodes()) {
+                    branch_list.removeChild(branch_list.firstChild);
+                }
+                let time_list = document.getElementById("time_list");
+                while(time_list.hasChildNodes()) {
+                    time_list.removeChild(time_list.firstChild);
+                }
+                $("input:radio[class='movie']").prop("checked", false);
+            }
+
+            function movie_onClick(event) {
+                console.log("movie click");
+                context.movie_name = event.target.value;
+                let theater_list = document.getElementById("theater_list");
+                while(theater_list.hasChildNodes()) {
+                    theater_list.removeChild(theater_list.firstChild);
+                }
+                let branch_list = document.getElementById("branch_list");
+                while(branch_list.hasChildNodes()) {
+                    branch_list.removeChild(branch_list.firstChild);
+                }
+                let time_list = document.getElementById("time_list");
+                while(time_list.hasChildNodes()) {
+                    time_list.removeChild(time_list.firstChild);
+                }
+
+                let pk = event.target.id;
+                context.movie_id = pk;
+                $.ajax({
+                    method: "GET",
+                    url: './ticketing',
+                    data: {
+                        'message': "movie_name_click",
+                        'movie_id': pk,
+                        'ticket_date': $("#ticket_date").val(),
+                        // 'csrfmiddlewaretoken': '{{ csrf_token }}',
+                    },
+                    dataType: "json",
+                })
+                .done(res => {
+                    if (res.alert) {
+                        $("input:radio[class='movie']").prop("checked", false);
+                        alert(res.alert);
+                        return;
                     }
-                    if(!is_requested || !context.movie_city) {
-                        let movie_city = $(this).val();
-                        console.log("movie_city: "+movie_city);
-                        context.movie_city = movie_city;
-                        is_requested = context.movie_city ? true : false;
-                        $('#branch_list').empty();
-                        $.ajax({
-                            method: "POST",
-                            url: "{% url 'ticketing' %}",
-                            data: { 
-                                'movie_city': movie_city,
-                                'csrfmiddlewaretoken': '{{ csrf_token }}',
-                            },
-                            dataType: "json",
-                        })
-                        .done(res => {
-                            let branch_names = res.branch_names;
-                            branch_names.forEach(branch_name => {
-                                let new_radio = "<input id="+branch_name+" type='radio' value="+branch_name+" class='theater_branch' name='theater_branch'/>";
-                                new_radio += "<label for="+branch_name+">"+branch_name+"</label>";
-                                $('#branch_list').append(new_radio);
-                            });
-                        })
-                        .fail((xhr, status, errorThrown) => {
-                            alert("오류가 발생했습니다: " + errorThrown);
+                    console.log(context);
+                    console.log(JSON.stringify(context));
+                    let theaters = res.theaters;
+                    console.log("theaters:"+theaters);
+                    theaters.forEach(theater => {
+                        let new_input = document.createElement('input');
+                        new_input.setAttribute("id", theater);
+                        new_input.setAttribute("type", 'radio');
+                        new_input.setAttribute("value", theater);
+                        new_input.setAttribute("class", 'theater_city');
+                        new_input.setAttribute("name", 'theater_city');
+
+                        let new_label = document.createElement('label');
+                        new_label.setAttribute("for", theater);
+                        new_label.appendChild(document.createTextNode(theater));
+
+                        document.getElementById("theater_list").appendChild(new_input);
+                        document.getElementById("theater_list").appendChild(new_label);
+                        // $('#theater_list').append(new_radio);
+                    });   
+                })
+                .fail((xhr, status, errorThrown) => {
+                    alert("오류가 발생했습니다: " + errorThrown);
+                })
+            
+            }
+
+            $(function () {
+
+                $("#theater_list").on("click", ".theater_city", () => {
+                    let movie_city = event.target.value;
+                    // let movie_city = $(this).val();
+                    console.log("movie_city: "+movie_city);
+                    context.movie_city = movie_city;
+                    console.log(context);
+                    is_requested = context.movie_city ? true : false;
+                    let branch_list = document.getElementById("branch_list");
+                    while(branch_list.hasChildNodes()) {
+                        branch_list.removeChild(branch_list.firstChild);
+                    }
+                    let time_list = document.getElementById("time_list");
+                    while(time_list.hasChildNodes()) {
+                        time_list.removeChild(time_list.firstChild);
+                    }
+                    // $('#branch_list').empty();
+                    $.ajax({
+                        method: "GET",
+                        url: './ticketing',
+                        data: { 
+                            'message': "theater_city_click",
+                            'ticket_date': $("#ticket_date").val(),
+                            'ticket_date': context.ticket_date,
+                            'movie_id': context.movie_id,
+                            'movie_city': movie_city,
+                            // 'csrfmiddlewaretoken': '{{ csrf_token }}',
+                        },
+                        dataType: "json",
+                    })
+                    .done(res => {
+                        let branch_names = res.branch_names;
+                        branch_names.forEach(branch_name => {
+                            let new_input = document.createElement('input');
+                            new_input.setAttribute("id", branch_name);
+                            new_input.setAttribute("type", 'radio');
+                            new_input.setAttribute("value", branch_name);
+                            new_input.setAttribute("class", 'theater_branch');
+                            new_input.setAttribute("name", 'theater_branch');
+
+                            let new_label = document.createElement('label');
+                            new_label.setAttribute("for", branch_name);
+                            new_label.appendChild(document.createTextNode(branch_name));
+
+                            document.getElementById("branch_list").appendChild(new_input);
+                            document.getElementById("branch_list").appendChild(new_label);
+                            // $('#branch_list').append(new_radio);
                         });
-                    }
+                    })
+                    .fail((xhr, status, errorThrown) => {
+                        alert("오류가 발생했습니다: " + errorThrown);
+                    });
                 });
-            });
-        */
-        </script>
 
+                $("#branch_list").on("click", ".theater_branch", () => {
+                    let branch_name = event.target.value;
+                    context.branch_name = branch_name;
+                    console.log(context);
+                    let time_list = document.getElementById("time_list");
+                    while(time_list.hasChildNodes()) {
+                        time_list.removeChild(time_list.firstChild);
+                    }
+                    $.ajax({
+                        method: "GET",
+                        url: "./ticketing",
+                        data: {
+                            'message': "theater_branch_click",
+                            'ticket_date': $("#ticket_date").val(),
+                            'movie_id': context['movie_id'],
+                            'theater_city': context['movie_city'],
+                            'branch_name': context['branch_name'],
+                        },
+                        dataType: "json",
+                    }).done(res => {
+                        let screens = res.screens;
+                        console.log(screens);
+                        screens.forEach(screen => {
+                            let new_input = document.createElement('input');
+                            new_input.setAttribute("id", screen.theater_name + screen.start_time);
+                            new_input.setAttribute("type", 'radio');
+                            new_input.setAttribute("value", screen.theater_name);
+                            new_input.setAttribute("class", 'ticket_info');
+                            new_input.setAttribute("name", 'ticket_info');
+
+                            let new_label = document.createElement('label');
+                            new_label.setAttribute("for", screen.theater_name + screen.start_time);
+                            new_label.appendChild(document.createTextNode(screen.theater_name+"시작 시간: "+screen.start_time+"끝나는 시간: "+screen.end_time));
+
+                            document.getElementById("time_list").appendChild(new_input);
+                            document.getElementById("time_list").appendChild(new_label);
+                        })
+                    })
+                })
+            })
+            
+            
+        </script>
+        
         <div id="modal">
             <div class="seat_header">
                 <h2 class="header__title">좌석 선택</h2>
