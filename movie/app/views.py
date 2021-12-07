@@ -19,7 +19,8 @@ from django.http.response import HttpResponse
 from django.shortcuts import render, redirect
 from django.utils import timezone
 
-from .models import BranchOffice, CustomerUser, MovieInfo, Screen, Seat, TheaterInfo
+from .models import BranchOffice, CustomUser, CustomerUser, MovieInfo, Screen, Seat, TheaterInfo
+from .forms import BranchForm
 import datetime
 
 # Create your views here.
@@ -153,7 +154,8 @@ def signup_view(request):
 
         # 패스워드가 같은지 체크
         if request.POST['password1'] == request.POST['password2']:
-            custom_user = CustomerUser()
+            # 회원가입
+            custom_user = CustomUser()
             custom_user.username = request.POST['username']
             custom_user.password = request.POST['password1']
             custom_user.phone_number = request.POST['phone_number']
@@ -161,8 +163,9 @@ def signup_view(request):
             print(request.POST['username'])
             custom_user.save()
 
+            # 회원가입과 동시에 로그인도 해주는 기능
             user = authenticate(request=request, username=custom_user.username, password=custom_user.password)
-            login(request, user)
+            ##login(request=request, user=user)
             return redirect("home")
         
         # 패스워드가 다른 경우
@@ -215,4 +218,14 @@ def manage_main(request):
     return render(request, './manage_page/manage_main.html')
 
 def manage_revenue(request):
-    return render(request, './manage_page/manage_revenue.html')
+    branch_office = BranchOffice.objects.all()
+    branch_form = BranchForm()
+    context = {
+        'branch_office' : branch_office,
+        'branch_form' : branch_form,
+    }
+
+    return render(request, './manage_page/manage_revenue.html', context)
+
+def manage_revenue_search(request):
+    return
