@@ -137,6 +137,9 @@ def ticketing_detail(request):
 def events(request):
     return render(request, 'events.html')
 
+def event_detail(request):
+    return render(request, 'event_detail.html')
+
 def forget(request):
     return render(request, 'forget.html')
 

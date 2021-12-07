@@ -6,8 +6,8 @@
             <div class="row">
                 <div class="col-lg-12 text-center">
                     <div class="normal__breadcrumb__text">
-                        <h2>Sign Up</h2>
-                        <p>Welcome to the official Anime blog.</p>
+                        <h2>회원가입</h2>
+                        <p>CCV에 오신걸 환영합니다.</p>
                     </div>
                 </div>
             </div>
@@ -21,30 +21,103 @@
             <div class="row">
                 <div class="col-lg-6">
                     <div class="login__form">
-                        <h3>Sign Up</h3>
+                        <h3>회원가입</h3>
                         <form action="{% url 'signup' %}" method="post">
                             {% csrf_token %}
                             <div class="input__item">
-                                <input type="text" placeholder="Your Name" name ="username">
+                                <input type="text" placeholder="아이디" name="username">
                                 <span class="icon_profile"></span>
                             </div>
                             <div class="input__item">
-                                <input type="text" placeholder="Password" name="password1">
+                                <input type="password" placeholder="비밀번호" name="password1">
                                 <span class="icon_lock"></span>
                             </div>
                             <div class="input__item">
-                                <input type="text" placeholder="Check your password" name="password2">
+                                <input type="password" placeholder="비밀번호 확인" name="password2">
                                 <span class="icon_lock"></span>
                             </div>
                             <div class="input__item">
-                                <input type="text" placeholder="Phone number" name="phone_number">
-                                <span class="icon_mail"></span>
+                                <input type="text" placeholder="이름" name="">
+                                <span class="icon_profile"></span>
                             </div>
-                            <button type="submit" class="site-btn">Login Now</button>
+                            <div class="input__item">
+                                <input type="text" placeholder="휴대폰번호" name="phone_number">
+                                <span class="icon_phone"></span>
+                            </div>
+                            <div class="input__item">
+                                <input type="text" placeholder="성별">
+                                <span class="icon_profile"></span>
+                            </div>
+                            <div class="input__item">
+                                <input type="text" placeholder="생년월일">
+                                <span class="icon_profile"></span>
+                            </div>
+                            
+                            <button type="submit" class="site-btn">회원가입</button>
                         </form>
-                        <h5>Already have an account? <a href="#">Log In!</a></h5>
+                        <h5>이미 CCV회원이신가요? <a href="{% url 'login' %}">로그인</a></h5>
                     </div>
                 </div>
+                <div class="col-lg-6">
+                    <div class="signup__info">
+                        <table
+                            border="1"
+                            width="50%"
+                            height="200"
+                            cellspacing="5">
+                            <caption>회원 등급표(월 기준)</caption>
+                            <tbody>
+                                <tr align="center" bgcolor="white">
+                                    <td>Fresh</td>
+                                    <td>10편 이하</td>
+                                </tr>
+                                <tr align="center" bgcolor="white">
+                                    <td>Normal</td>
+                                    <td>20편 이하</td>
+                                </tr>
+                                <tr align="center" bgcolor="white">
+                                    <td>vip</td>
+                                    <td>50편 이하</td>
+                                </tr>
+                                <tr align="center" bgcolor="white">
+                                    <td>vvip</td>
+                                    <td>100편 이하</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                        <table
+                            border="1"
+                            width="50%"
+                            height="200"
+                            cellspacing="5">
+                            <caption>등급별 혜택</caption>
+                            <thead>
+                                <tr align="center" bgcolor="white">
+                                    <td></td>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr align="center" bgcolor="white">
+                                    <td>Fresh</td>
+                                    <td>없음</td>
+                                </tr>
+                                <tr align="center" bgcolor="white">
+                                    <td>Normal</td>
+                                    <td>1000원 할인</td>
+                                </tr>
+                                <tr align="center" bgcolor="white">
+                                    <td>vip</td>
+                                    <td>2000원 할인</td>
+                                </tr>
+                                <tr align="center" bgcolor="white">
+                                    <td>vvip</td>
+                                    <td>2000원 할인 + 음료</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                <!--
                 <div class="col-lg-6">
                     <div class="login__social__links">
                         <h3>Login With:</h3>
@@ -56,6 +129,7 @@
                         </ul>
                     </div>
                 </div>
+                -->
             </div>
         </div>
     </section>
