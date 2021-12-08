@@ -42,18 +42,17 @@
                 </div>
             </div>
         </div>
-        <button type="button" onclick="seatBtnOnClick()">좌석 선택</button>
+        <div style="display: flex; justify-content: center;margin-top: 20px;">
+            <button id="select_seat_btn" type="button" onclick="seatBtnOnClick()">좌석 선택</button>
+        </div>
     </form>
     
-    <div id="modal">
+    <div id="modal" style="height: 450px;">
         <div class="seat_header">
             <input id="seat__back_btn" type="button" value="뒤로가기" onclick="backBtnOnClick()">
-            <h2 class="header__title">좌석 선택</h2>
-            <p class="note note--screen">Please view on a larger screen</p>
-            <p class="note note--support">Sorry, but your browser doesn't support preserve-3d!</p>
+            <h2 class="header__title">스크린</h2>
         </div>
         <div class="plan">
-            <h3 class="plan__title">Seating Plan</h3>
             <div class="rows rows--mini">
                <!-- seat bts(radio inputs) --> 
             </div>

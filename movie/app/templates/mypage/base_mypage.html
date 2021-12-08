@@ -28,7 +28,7 @@
                 </div>
                 <div class="col-lg-8 manage_title">
                     <div>
-                        <a href="{% url 'manage_main' %}">
+                        <a href="{% url 'mypage' %}">
                             <p>회원 페이지</p>
                         </a>
                     </div>
@@ -48,22 +48,22 @@
                 <li>
                     <span class="nav__item">
                         <p class="nav__header">회원 정보</p>
-                        <a href="{% url 'manage_main' %}">회원 개인정보</a>
-                        <a href="{% url 'manage_main' %}">정보 수정</a>
+                        <a href="{% url 'mypage' %}">회원 개인정보</a>
+                        <a href="{% url 'mypage' %}">정보 수정</a>
                     </span>
                 </li>
                 <hr/>
                 <li>
                     <span class="nav__item">
                         <p class="nav__header">예매 정보</p>
-                        <a href="">예매 내역 조회</a>
+                        <a href="{% url 'reservationinfo' %}">예매 내역 조회</a>
                     </span>
                 </li>
                 <hr/>
                 <li>
                     <span class="nav__item">
                         <p class="nav__header">이벤트</p>
-                        <a href="{% url 'manage_revenue' %}">이벤트 참여 내역</a>
+                        <a href="{% url 'eventrecord' %}">이벤트 참여 내역</a>
                     </span>
                 </li>
                 <hr/>

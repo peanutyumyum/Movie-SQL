@@ -19,7 +19,9 @@ from django.shortcuts import render, redirect
 from django.urls import reverse
 from django.utils import timezone
 
+
 from .models import BranchOffice, CustomUser, CustomerUser, EmployeeUser, MovieInfo, Sales, Screen, Seat, TheaterInfo, Reservation
+
 
 import datetime
 
@@ -182,7 +184,7 @@ def ticketing(request):
 
             return JsonResponse({
                    'success': True,
-                   'url': reverse('mypage')
+                   'url': reverse('reservationinfo')
                 })
             
             if (reservation.save()): 
@@ -296,7 +298,24 @@ def infomodification(request):
     return render(request, './mypage/infomodification.html')
 
 def reservationinfo(request):
-    return render(request, './mypage/reservationinfo.html') 
+    user = CustomerUser.objects.get(user=request.user)
+    reservations = Reservation.objects.filter(customer=user)
+    context = dict()
+    context['reservations'] = []
+    for reservation in reservations:
+        date = reservation.movie_serial.start_time
+        reservation_info = {
+            'movie_name': reservation.movie_serial.movie_id.movie_name,
+            'branch_city': reservation.seat.theater_name.branch_office.city,
+            'branch_name': reservation.seat.theater_name.branch_office.name,
+            'theater_name': (reservation.seat.theater_name).theater_name,
+            'seat': reservation.seat.seat_num,
+            'start_time': str(date.year)+"."+str(date.month)+"."+str(date.day)+" / "+str(date.hour)+":"+str(date.minute),
+            'play_time': reservation.movie_serial.play_time,
+        }
+        context['reservations'].append(reservation_info)
+    # print(context)
+    return render(request, './mypage/reservationinfo.html', context) 
 
 
 def manage_main(request):
