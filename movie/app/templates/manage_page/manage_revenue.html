@@ -98,7 +98,14 @@
             <!-- Bar Chart -->
             <div class="card shadow mb-4">
                 <div class="card-header py-3">
-                    <h6 class="m-0 font-weight-bold text-primary">차트 이름</h6>
+                    <h6 class="m-0 font-weight-bold text-primary">장르 별 연령대 매출</h6>
+                    <select style="display: inline-block;" name="branch" onchange="setData(event)">
+                        <option value="공포">공포</option>
+                        <option value="SF">SF</option>
+                        <option value="공포">공포</option>
+                        <option value="공포">공포</option>
+                        <option value="공포">공포</option>
+                    </select>
                 </div>
                 <div class="card-body">
                     <div class="chart-bar">
@@ -239,52 +246,65 @@
         
     </script>
     <script>
-        // Set new default font family and font color to mimic Bootstrap's default styling
-        Chart.defaults.global.defaultFontFamily = '-apple-system,system-ui,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif';
-        Chart.defaults.global.defaultFontColor = '#292b2c';
+        function makeBarChart(sales) {
+            // Set new default font family and font color to mimic Bootstrap's default styling
+            Chart.defaults.global.defaultFontFamily = '-apple-system,system-ui,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif';
+            Chart.defaults.global.defaultFontColor = '#292b2c';
 
-        // Bar Chart Example
-        var ctx = document.getElementById("myBarChart");
-        var myLineChart = new Chart(ctx, {
-        type: 'bar',
-        data: {
-            labels: ["January", "February", "March", "April", "May", "June"],
-            datasets: [{
-            label: "Revenue",
-            backgroundColor: "rgba(2,117,216,1)",
-            borderColor: "rgba(2,117,216,1)",
-            data: [4215, 5312, 6251, 7841, 9821, 14984],
-            }],
-        },
-        options: {
-            scales: {
-            xAxes: [{
-                time: {
-                unit: 'month'
-                },
-                gridLines: {
-                display: false
-                },
-                ticks: {
-                maxTicksLimit: 6
-                }
-            }],
-            yAxes: [{
-                ticks: {
-                min: 0,
-                max: 15000,
-                maxTicksLimit: 5
-                },
-                gridLines: {
-                display: true
-                }
-            }],
+            
+            // Bar Chart Example
+            var ctx = document.getElementById("myBarChart");
+            var myLineChart = new Chart(ctx, {
+            type: 'bar',
+            data: {
+                labels: ["10대", "20대", "30대", "40대", "50대", "60대"],
+                datasets: [{
+                label: "Revenue",
+                backgroundColor: "rgba(2,117,216,1)",
+                borderColor: "rgba(2,117,216,1)",
+                data: sales,
+                }],
             },
-            legend: {
-            display: false
+            options: {
+                scales: {
+                xAxes: [{
+                    time: {
+                    unit: 'month'
+                    },
+                    gridLines: {
+                    display: false
+                    },
+                    ticks: {
+                    maxTicksLimit: 6
+                    }
+                }],
+                yAxes: [{
+                    ticks: {
+                    min: 0,
+                    max: 15000,
+                    maxTicksLimit: 5
+                    },
+                    gridLines: {
+                    display: true
+                    }
+                }],
+                },
+                legend: {
+                display: false
+                }
+            }
+            });
+        }
+        
+        function setData(event) {
+            if (event.target.value === '공포') {
+                let sales = [14563, 15312, 6251, 3841, 921, 184];
+                makeBarChart(sales);
+            } else if (event.target.value === 'SF') {
+                let sales = [9563, 13312, 8251, 3841, 321, 14];
+                makeBarChart(sales);
             }
         }
-        });
     </script>
 </html>
 
