@@ -1,60 +1,39 @@
-{% extends 'base_mypage.html' %}
-{% block content %}          
-        <h1 class="mt-4">회원 정보</h1>
-        <ol class="breadcrumb mb-4">
-            <!-- <li class="breadcrumb-item active">회원 정보</li> -->
-        </ol>
+{% extends './base_mypage.html' %}
+{% block extrahead %}
+<link rel="stylesheet" href="../../static/css/mypage/mypage.css">
+{% endblock %}
+{% block content %}   
+<div>
+    <img class="profile-back" src="../../static/img/profile_back.jpg">
+    <div class="profile-container">
+        <img src="../../static/img/profile_default.png"alt="프로필 사진">
+        
+        <div class="name-container">
+            <p><strong>박민선</strong></p>
+        </div>
+    </div>
 
-        <div class="mypage__info">
-            <hr>
-            <br>
-        <div class="anime__review__item">
+    <div class="info-container">
+        <div class="spec">
+            <div>
+                <div class="spec-title">
+                    <p>PROFILE</p>
+                </div>
                 
-            <div class="anime__review__item__text">
-                <h6>이름</h6>
-                <p>홍길동 (예시)</p>
+                <strong>생년월일 </strong>2000.11.25 <br>
+                <strong>성별 </strong>여 <br>
+                <strong>전화번호 </strong> 010-1234-5678<br>
+                <strong>이메일 </strong> min@hanyang.ac.kr
+            </div>
+            <div>
+                <div class="spec-title">
+                    <p>FIELD</p>
+                </div>    
+                
+                <strong>직급</strong> 직원<br>
+                <strong>소속부서</strong> 마케팅
             </div>
         </div>
-        <div class="anime__review__item">
-            
-            <div class="anime__review__item__text">
-                <h6>회원 등급</h6>
-                <p>vip (예시)</p>
-            </div>
-        </div>
-        <div class="anime__review__item">
-            
-            <div class="anime__review__item__text">
-                <h6>생년 월일</h6>
-                <p>2021.12.02 (예시)</p>
-            </div>
-        </div>
-        <div class="anime__review__item">
-            
-            <div class="anime__review__item__text">
-                <h6>성별</h6>
-                <p>남 (예시)</p>
-            </div>
-        </div>
-        <div class="anime__review__item">
-            
-            <div class="anime__review__item__text">
-                <h6>아이디</h6>
-                <p>id</p>
-            </div>
-        </div>
-        <div class="anime__review__item">
-            
-            <div class="anime__review__item__text">
-                <h6>전화번호</h6>
-                <p>010-1111-1111</p>
-            </div>
-        </div>
-        <div class="anime__review__item">                
-            <div class="anime__review__item__text">
-                <h6>이메일</h6>
-                <p>naver@naver.com</p>
-            </div>
-        </div>
-    </div>          
+    </div>
+</div>      
 {% endblock %}

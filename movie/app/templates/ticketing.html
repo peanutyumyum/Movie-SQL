@@ -79,7 +79,7 @@
     /* 좌석 선택 화면 */
     function seatBtnOnClick() {
         const SEAT_COLUMN = 18;
-        console.log(context);
+        
         $.ajax({
             method: "POST",
             url: './ticketing',
@@ -125,7 +125,7 @@
                 
                 for (let j = 0; j < column; ++j) {
                     let new_seat_num = all_seats[(i * SEAT_COLUMN) + j].seat_num;
-                    console.log("new_seat_num: "+new_seat_num);
+                    
                     /* <input type="radio" name="seat" id="A1" value="A1"/> */
                     let new_seat_input = document.createElement('input');
                     new_seat_input.setAttribute('type', 'radio');
@@ -163,7 +163,7 @@
     }
 
     function reserveBtnOnClick() {
-        console.log("reserveBtn click");
+        
         $.ajax({
             method: "post",
             url: './ticketing',
@@ -194,7 +194,6 @@
     /* 티켓 선택 화면 */
     function dateChangeHandler(event) {
         context.ticket_date = event.target.value;
-        console.log(context);
 
         let theater_list = document.getElementById("theater_list");
         while(theater_list.hasChildNodes()) {
@@ -212,7 +211,6 @@
     }
 
     function movie_onClick(event) {
-        console.log("movie click");
         context.movie_name = event.target.value;
         let theater_list = document.getElementById("theater_list");
         while(theater_list.hasChildNodes()) {
@@ -246,10 +244,9 @@
                 alert(res.alert);
                 return;
             }
-            console.log(context);
-            console.log(JSON.stringify(context));
+            
             let theaters = res.theaters;
-            console.log("theaters:"+theaters);
+            
             theaters.forEach(theater => {
                 let new_input = document.createElement('input');
                 new_input.setAttribute("id", theater);
@@ -279,9 +276,9 @@
         $("#theater_list").on("click", ".theater_city", () => {
             let movie_city = event.target.value;
             // let movie_city = $(this).val();
-            console.log("movie_city: "+movie_city);
+            
             context.movie_city = movie_city;
-            console.log(context);
+            
             is_requested = context.movie_city ? true : false;
             let branch_list = document.getElementById("branch_list");
             while(branch_list.hasChildNodes()) {
@@ -333,7 +330,7 @@
         $("#branch_list").on("click", ".theater_branch", () => {
             let branch_name = event.target.value;
             context.branch_name = branch_name;
-            console.log(context);
+            
             let time_list = document.getElementById("time_list");
             while(time_list.hasChildNodes()) {
                 time_list.removeChild(time_list.firstChild);
@@ -351,11 +348,11 @@
                 dataType: "json",
             }).done(res => {
                 let screens = res.screens;
-                console.log(screens);
+                
                 screens.forEach(screen => {
                     let start_time_arr = (screen.start_time).split("");
                     let end_time_arr = (screen.end_time).split("");
-                    console.log(start_time_arr);
+                    
                     start_time_arr = start_time_arr.slice((start_time_arr).indexOf("T") + 1, (start_time_arr).indexOf("Z"));
                     start_time_arr = start_time_arr.slice(0, 5);
                     const START_TIME = start_time_arr.join("");
@@ -396,12 +393,10 @@
             let start_time = event.target.id;
             context.theater_name = theater_name;
             context.start_time = start_time;
-            console.log(context);
         })
 
         $(".rows--mini").on("click", ".seat_tooltip", () => {
             context.seat = event.target.htmlFor;
-            console.log("final_context:",context);
         })
     }) 
 </script> 
