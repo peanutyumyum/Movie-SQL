@@ -103,34 +103,27 @@ p {
     color: #1F588D;
 }
 
-@keyframes fade-in {
-    from {
-        opacity: 0;
-    }
-    to {
-        opacity: 1;
-    }
-}
-
-@keyframes fade-out {
-    from {
-        opacity: 1;
-    }
-    to {
-        opacity: 0;
-    }
-}
-
-.appear {
-    animation: fade-in 1s;
-}
-
-.disappear {
-    animation: fade-out 1s;
+#select_seat_btn {
+    border: none;
+    border-radius: 10px;
+    padding: 10px 30px;
+    background-color:rgb(173, 173, 173);
+    color: #fff;
 }
 
 #modal {
     margin-top: 20px;
+    padding-bottom: 50px;
+}
+
+#seat__back_btn {
+    border: none;
+    background: none;
+    color: #fff;
+}
+
+.header__title {
+    text-align: center;
 }
 
 .seat_row input[type='radio'] {
