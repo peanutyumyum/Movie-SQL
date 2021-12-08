@@ -88,7 +88,7 @@ class Screen(models.Model):
 
 class Reservation(models.Model):
     customer = models.ForeignKey(CustomerUser, related_name="reservation_history", on_delete=models.CASCADE)
-    reservation_num = models.CharField(max_length=10, primary_key=True)
+    #reservation_num = models.CharField(max_length=200, primary_key=True)
     movie_serial = models.ForeignKey(Screen, related_name="movie_reservation", on_delete=models.CASCADE)
     seat = models.ForeignKey(Seat, related_name="reservationer", on_delete=models.CASCADE)
 
