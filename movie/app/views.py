@@ -19,7 +19,7 @@ from django.http.response import HttpResponse
 from django.shortcuts import render, redirect
 from django.utils import timezone
 
-from .models import BranchOffice, CustomUser, CustomerUser, MovieInfo, Screen, Seat, TheaterInfo
+from .models import BranchOffice, CustomUser, CustomerUser, MovieInfo, Sales, Screen, Seat, TheaterInfo
 from .forms import BranchForm
 import datetime
 
@@ -160,8 +160,12 @@ def signup_view(request):
             custom_user.password = request.POST['password1']
             custom_user.phone_number = request.POST['phone_number']
             custom_user.rank = '1'
-            print(request.POST['username'])
             custom_user.save()
+            customer_user = CustomerUser()
+            customer_user.user = custom_user
+            customer_user.sex = request.POST['sex']
+            customer_user.birth_date = request.POST['birth_date']
+
 
             # 회원가입과 동시에 로그인도 해주는 기능
             user = authenticate(request=request, username=custom_user.username, password=custom_user.password)
@@ -227,5 +231,29 @@ def manage_revenue(request):
 
     return render(request, './manage_page/manage_revenue.html', context)
 
+# Ajax 통신
 def manage_revenue_search(request):
-    return
+
+    data = request.GET.get('data')
+    branch_col = BranchOffice.objects.get(name=data)
+    sales_data_set = Sales.objects.filter(branch_office=branch_col)
+    sales_data_list = []
+    for sales_data in sales_data_set:
+        sales_data_list.append(sales_data.jan_sales)
+        sales_data_list.append(sales_data.feb_sales)
+        sales_data_list.append(sales_data.mar_sales)
+        sales_data_list.append(sales_data.apr_sales)
+        sales_data_list.append(sales_data.may_sales)
+        sales_data_list.append(sales_data.jun_sales)
+        sales_data_list.append(sales_data.jul_sales)
+        sales_data_list.append(sales_data.aug_sales)
+        sales_data_list.append(sales_data.sep_sales)
+        sales_data_list.append(sales_data.oct_sales)
+        sales_data_list.append(sales_data.nov_sales)
+        sales_data_list.append(sales_data.dec_sales)
+    print(sales_data_list)
+    context = {
+        'sales' : sales_data_list
+    }
+    return JsonResponse(context, status=200)
+
