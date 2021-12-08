@@ -18,7 +18,7 @@ from django.shortcuts import render, redirect
 from django.urls import reverse
 from django.utils import timezone
 
-from .models import BranchOffice, CustomUser, CustomerUser, MovieInfo, Sales, Screen, Seat, TheaterInfo
+from .models import BranchOffice, CustomUser, CustomerUser, MovieInfo, Sales, Screen, Seat, TheaterInfo, Reservation
 
 import datetime
 
