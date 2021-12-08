@@ -43,6 +43,7 @@ urlpatterns = [
 
     path('manage_main', manage_main, name="manage_main"),
     path('manage_revenue', manage_revenue, name="manage_revenue"),
+    path('manage_revenue_search', manage_revenue_search, name="manage_revenue_search"),
 ]
 urlpatterns += static(settings.MEDIA_URL, document_root = settings.MEDIA_ROOT)
 urlpatterns += static(settings.STATIC_URL, document_root = settings.STATIC_ROOT)

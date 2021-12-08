@@ -18,6 +18,9 @@ class Depart(models.Model):
 class BranchOffice(models.Model):
     name = models.CharField(max_length=20)
     city = models.CharField(max_length=20) # 서울, 경기
+    def __str__(self):
+        return self.name
+
 
 class Sales(models.Model):
     branch_office = models.ForeignKey(BranchOffice, related_name='sales', on_delete=models.CASCADE)
