@@ -19,7 +19,6 @@ from django.urls import reverse
 from django.utils import timezone
 
 from .models import BranchOffice, CustomUser, CustomerUser, MovieInfo, Sales, Screen, Seat, TheaterInfo
-from .forms import BranchForm
 
 import datetime
 
@@ -292,10 +291,8 @@ def manage_main(request):
 
 def manage_revenue(request):
     branch_office = BranchOffice.objects.all()
-    branch_form = BranchForm()
     context = {
         'branch_office' : branch_office,
-        'branch_form' : branch_form,
     }
 
     return render(request, './manage_page/manage_revenue.html', context)
