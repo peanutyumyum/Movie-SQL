@@ -13,15 +13,16 @@ from django.contrib.auth.forms import AuthenticationForm, UserCreationForm
 ## filter(Q(속성이름__icontains = 검색물))로 이용
 from django.db.models import Q
 
-
-
 from django.http.response import HttpResponse
 from django.shortcuts import render, redirect
+from django.urls import reverse
 from django.utils import timezone
 
 from .models import BranchOffice, CustomUser, CustomerUser, MovieInfo, Sales, Screen, Seat, TheaterInfo
 from .forms import BranchForm
+
 import datetime
+
 
 # Create your views here.
 def home(request):
@@ -57,14 +58,14 @@ def ticketing(request):
             #print("선택된 영화:", movies)
             screens = Screen.objects.filter(movie_id = res_id)
             screens = screens.filter(start_time__date=ticket_date)
-            print("선택된 영화 상영 정보:", screens)
+            #print("선택된 영화 상영 정보:", screens)
             theaters = []
             for screen in screens:
                 theaters.append(((screen.theater_number).branch_office).city)
             context = {
                 'theaters': list(set(theaters)),
             }
-            print("선택된 영화가 상영되는 지점 정보:", context)
+            #print("선택된 영화가 상영되는 지점 정보:", context)
             return JsonResponse(context, status=200)
         
         elif request.GET.get('message') == "theater_city_click":
@@ -75,12 +76,12 @@ def ticketing(request):
             theaters = TheaterInfo.objects.all()
             for branch_office in branch_offices:
                 theaters = theaters.filter(branch_office=branch_office)
-            print("theaters: ", theaters)
+            # print("theaters: ", theaters)
            
             screens = Screen.objects.filter(start_time__date=ticket_date)
             for theater in theaters:
                 screens = screens.filter(movie_id=res_id, theater_number=theater)
-            print("screens: ", screens)
+            #print("screens: ", screens)
             
             branch_names = []
             for screen in screens:
@@ -118,8 +119,76 @@ def ticketing(request):
             }
 
             return JsonResponse(context, status=200)
+        elif request.POST['message'] == 'submit':
+            branch_name = request.POST['branch_name']
+            # print("branch_name:", branch_name)
+            theater_city = request.POST['theater_city']
+            # print("theater_city:", theater_city)
+            theater_name = request.POST['theater_name']
+            # print("theater_name:", theater_name)
+            movie_id = request.POST['movie_id']
+            # print("movie_id:", movie_id)
+            start_time = request.POST['start_time']
+            # print("start_time:", start_time)
 
-        
+            branch_office = BranchOffice.objects.get(name=branch_name, city=theater_city)
+            # print("branch_office: ",branch_office)
+            theater = TheaterInfo.objects.get(theater_name=theater_name, branch_office=branch_office)
+            # print("theater: ", theater)
+            screen = Screen.objects.get(movie_id=movie_id, start_time=start_time,theater_number=theater)
+            # print("screen: ", screen)
+            all_seats = Seat.objects.filter(theater_name=theater)
+            reservations = Reservation.objects.filter(movie_serial=screen, seat__in=all_seats)
+            
+            seat_context = {
+                'all_seats': list(all_seats.values()),
+                'reservations': list(reservations.values()),
+                'seat_rows': int(len(list(all_seats.values())) / 18) + 1,
+            }
+            
+            return JsonResponse(seat_context, status=200)
+
+        elif request.POST['message'] == 'reservation':
+            seat_num = request.POST['seat_num']
+            branch_name = request.POST['branch_name']
+            # print("branch_name:", branch_name)
+            branch_city = request.POST['branch_city']
+            # print("theater_city:", theater_city)
+            theater_name = request.POST['theater_name']
+            # print("theater_name:", theater_name)
+            movie_id = request.POST['movie_id']
+            # print("movie_id:", movie_id)
+            start_time = request.POST['start_time']
+            # print("start_time:", start_time)
+
+            branch_office = BranchOffice.objects.get(name=branch_name, city=branch_city)
+            # print("branch_office: ",branch_office)
+            theater = TheaterInfo.objects.get(theater_name=theater_name, branch_office=branch_office)
+            # print("theater: ", theater)
+            movie_serial = Screen.objects.get(movie_id=movie_id, start_time=start_time,theater_number=theater)
+            seat = Seat.objects.get(theater_name=theater, seat_num=seat_num)
+
+            # customer, movie_serial, seat 으로 새로운 Reservation 생성
+            reservation = Reservation()
+            print("user", CustomerUser.objects.get(user=request.user));
+            reservation.customer = CustomerUser.objects.get(user=request.user)
+            reservation.movie_serial = movie_serial
+            reservation.seat = seat
+            reservation.save()
+
+            return JsonResponse({
+                   'success': True,
+                   'url': reverse('mypage')
+                })
+            
+            if (reservation.save()): 
+                return JsonResponse({
+                   'success': True,
+                   'url': reverse('mypage')
+                })
+            else:
+                return JsonResponse({'success': False})
+            
 
     # if request.method == "POST":
         # 영화이름 movie
@@ -132,8 +201,8 @@ def ticketing(request):
     #return HttpResponse("hi")
     return JsonResponse(context, status=200)
 
-def ticketing_detail(request):
-    return render(request, 'ticketing.html')
+def ticketing_seat(request, context):
+    return render(request, 'ticketing_seat.html', context)
 
 def events(request):
     return render(request, 'events.html')

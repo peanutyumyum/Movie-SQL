@@ -1,0 +1,25 @@
+.banner_side_wrap{
+    position: fixed;
+    top: 220px;
+    left: 55%;
+    margin-left: 600px;
+    z-index: 10;
+    
+}   
+
+.banner_side_wrap .btn_close {
+    position: absolute;
+    right: 0;
+    top: 0;
+    width: 13px;
+    height: 13px;
+    border: 0;
+    text-indent: -9999em;
+    background: transparent url(https://www.lottecinema.co.kr/NLCHS/Content/images/icon/close_13_gry.png) no-repeat 0 0;
+}
+
+
+.background_color{
+    width: 100%;
+    background-color: rgb(250, 254, 255);
+}

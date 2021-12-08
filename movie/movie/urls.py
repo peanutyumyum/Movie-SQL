@@ -34,6 +34,7 @@ urlpatterns = [
     path('findID', findID, name="findID"),
     path('logout/',logout, name='logout'),
     path('ticketing', ticketing, name="ticketing"),
+    path('ticketing_seat', ticketing_seat, name="ticketing_seat"),
     
     path('mypage', mypage, name="mypage"),
     path('eventrecord', eventrecord, name="eventrecord"),
