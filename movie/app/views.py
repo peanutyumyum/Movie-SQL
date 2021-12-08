@@ -6,6 +6,7 @@ from django.db.models.query import QuerySet
 from django.http import JsonResponse
 
 # for user
+from django.contrib import auth, messages
 from django.contrib.auth import login, logout, authenticate
 from django.contrib.auth.forms import AuthenticationForm, UserCreationForm
 
@@ -18,13 +19,14 @@ from django.shortcuts import render, redirect
 from django.urls import reverse
 from django.utils import timezone
 
-from .models import BranchOffice, CustomUser, CustomerUser, MovieInfo, Sales, Screen, Seat, TheaterInfo
+from .models import BranchOffice, CustomUser, CustomerUser, EmployeeUser, MovieInfo, Sales, Screen, Seat, TheaterInfo, Reservation
 
 import datetime
 
 
 # Create your views here.
 def home(request):
+    print(request.user)
     return render(request, 'main.html')
 
 def movie_list(request):
@@ -34,11 +36,14 @@ def movie_detail(request):
     return render(request, 'movie-detail.html')
 
 def ticket_list(request):
-    movies = MovieInfo.objects.all()
-    context = {
-        'movies' : movies,
-        }
-    return render(request, 'ticketing.html', context)
+    if request.user:
+        movies = MovieInfo.objects.all()
+        context = {
+            'movies' : movies,
+            }
+        return render(request, 'ticketing.html', context)
+    else:
+        return redirect('login')
 
 
 def ticketing(request):
@@ -255,11 +260,13 @@ def login_view(request):
     if request.method == "POST":
         username = request.POST['username']
         password = request.POST['password']
-        user = authenticate(request=request, username=username, password=password)
+        user = auth.authenticate(request, username='admin', password='1234')
         if user is not None:
+            print('로그인')
             login(request, user)
             return redirect("home")
         else:
+            messages.info(request, "유저의 형식이 옳지 않습니다.")
             print("유저의 형식이 옳지 않습니다.")
             return redirect("home")
     else:
@@ -267,14 +274,20 @@ def login_view(request):
 
 def logout_view(request):
     logout(request)
-    return redirect("main")
-    
+    return redirect("home")
+
+def mypage(request):
+    user_query = CustomUser.objects.get(username=request.user)
+    if CustomerUser.objects.filter(user=user_query):
+        print('일반유저')
+        return render(request, './mypage/mypage.html')
+    elif EmployeeUser.objects.filter(user=user_query):
+        print('관리자유저')
+        return render(request, './manage_page/manage_main.html')
+    return redirect('login')
 
 def events(request):
     return render(request, 'events.html')
-
-def mypage(request):
-    return render(request, './mypage/mypage.html')
 
 def eventrecord(request):
     return render(request, './mypage/eventrecord.html')

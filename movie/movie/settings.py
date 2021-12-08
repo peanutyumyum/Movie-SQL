@@ -31,6 +31,7 @@ ALLOWED_HOSTS = []
 # User model name defined
 AUTH_USER_MODEL = 'app.CustomUser'
 
+
 # Application definition
 
 INSTALLED_APPS = [

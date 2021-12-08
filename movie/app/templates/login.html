@@ -21,10 +21,10 @@
                 <div class="col-lg-6">
                     <div class="login__form">
                         <h3>로그인</h3>
-                        <form action="{% url 'login' %}" method="post">
+                        <form method="POST" action="{% url 'login' %}">
                             {% csrf_token %}
                             <div class="input__item">
-                                <input type="text" placeholder="아이디" name="username">
+                                <input type="username" placeholder="아이디" name="username">
                                 <span class="icon_mail"></span>
                             </div>
                             <div class="input__item">

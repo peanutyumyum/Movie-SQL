@@ -32,7 +32,7 @@ urlpatterns = [
     path('event_detail', event_detail, name="event_detail"),
     path('forget', forget, name="forget"),
     path('findID', findID, name="findID"),
-    path('logout/',logout, name='logout'),
+    path('logout/',logout_view, name='logout'),
     path('ticketing', ticketing, name="ticketing"),
     path('ticketing_seat', ticketing_seat, name="ticketing_seat"),
     
