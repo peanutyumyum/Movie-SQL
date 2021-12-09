@@ -102,13 +102,14 @@ def ticketing(request):
             theater_city = request.GET.get('theater_city')
             branch_name = request.GET.get('branch_name')
             ticket_date = request.GET.get('ticket_date')
-            branch_offices = BranchOffice.objects.filter(name=branch_name, city=theater_city)
+            branch_office = BranchOffice.objects.get(name=branch_name, city=theater_city)
+            print("branch_office: ", branch_office)
             theaters = TheaterInfo.objects.all()
-            for branch_office in branch_offices:
-                theaters = theaters.filter(branch_office=branch_office)
+            theaters = theaters.filter(branch_office=branch_office)
+            print("theaters: ", theaters)
             screens = Screen.objects.filter(start_time__date=ticket_date)
-            for theater in theaters:
-                screens = screens.filter(theater_number=theater, movie_id=movie_id)
+            print("screens: ", screens)
+            screens = screens.filter(theater_number__in=theaters, movie_id=movie_id)
             
             print("screens",screens)
 
@@ -140,10 +141,11 @@ def ticketing(request):
             branch_office = BranchOffice.objects.get(name=branch_name, city=theater_city)
             # print("branch_office: ",branch_office)
             theater = TheaterInfo.objects.get(theater_name=theater_name, branch_office=branch_office)
-            # print("theater: ", theater)
+            print("theater: ", theater)
             screen = Screen.objects.get(movie_id=movie_id, start_time=start_time,theater_number=theater)
-            # print("screen: ", screen)
+            print("screen: ", screen)
             all_seats = Seat.objects.filter(theater_name=theater)
+            print("all_seats: ", all_seats)
             reservations = Reservation.objects.filter(movie_serial=screen, seat__in=all_seats)
             
             seat_context = {

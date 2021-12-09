@@ -120,9 +120,9 @@
             for (let i = 0; i < seat_rows; ++i) {
                 /* <input type="radio" name="seat" id="A1" value="A1"/><label class="row__seat seat_tooltip" data-tooltip="A1" for="A1"></label> */
                 let row = $("#seat_row"+(i+1));
-                let column = i === 0 ? (seats_num >= SEAT_COLUMN ? SEAT_COLUMN : seats_num) : seats_num % (SEAT_COLUMN * i);
+                // let column = i === 0 ? (seats_num > SEAT_COLUMN ? SEAT_COLUMN : seats_num) : seats_num % (SEAT_COLUMN);
                 
-                for (let j = 0; j < column; ++j) {
+                for (let j = 0; j < 18; ++j) {
                     let new_seat_num = all_seats[(i * SEAT_COLUMN) + j].seat_num;
                     
                     /* <input type="radio" name="seat" id="A1" value="A1"/> */
