@@ -78,15 +78,14 @@ def ticketing(request):
             res_id = request.GET.get('movie_id')
             ticket_date = request.GET.get('ticket_date')
             branch_offices = BranchOffice.objects.filter(city=request.GET.get('movie_city'))
+            print("branch_offices: ", branch_offices)
             
             theaters = TheaterInfo.objects.all()
-            for branch_office in branch_offices:
-                theaters = theaters.filter(branch_office=branch_office)
+            theaters = theaters.filter(branch_office__in=branch_offices)
             # print("theaters: ", theaters)
            
             screens = Screen.objects.filter(start_time__date=ticket_date)
-            for theater in theaters:
-                screens = screens.filter(movie_id=res_id, theater_number=theater)
+            screens = screens.filter(movie_id=res_id, theater_number__in=theaters)
             #print("screens: ", screens)
             
             branch_names = []
